@@ -3,8 +3,8 @@ var through2 = require('through2'),
     template = [
       '@font-face {\n',
       '  font-family: "{{fontName}}";\n',
-      '  font-style: normal;\n',
-      '  font-weight: 400;\n',
+      '  font-style: "{{fontStyle}}";\n',
+      '  font-weight: "{{fontWeight}}";\n',
       '  src: local("{{fontName}}"),\n',
       '       url("data:application/x-font-{{fontType}};base64,{{base64}}") format("{{fontType}}");\n',
       '}'
@@ -28,11 +28,15 @@ module.exports = function (list) {
       var regexResult = file.path.match(/^.*\/(.+)\.(woff|woff2)$/),
       fileName = regexResult[1],
       fontType = regexResult[2],
-      fontName = fileName.replace(/_/g, ' '),
+      fontName = fileName.split('_')[0].replace(/_/g, ' '),
       base64 = file.contents.toString('base64'),
+      fontWeight = fileName.split('_')[1],
+      fontStyle = fileName.split('_')[2],
       tmpl = template
              .replace(/{{fontName}}/g, fontName)
              .replace(/{{fontType}}/g, fontType)
+             .replace(/{{fontStyle}}/g, fontStyle)
+             .replace(/{{fontWeight}}/g, fontWeight)
              .replace('{{base64}}', base64),
       output = new gutil.File({
         cwd: file.cwd,

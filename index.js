@@ -5,8 +5,7 @@ var through2 = require('through2'),
       '  font-family: "{{fontName}}";\n',
       '  font-style: {{fontStyle}};\n',
       '  font-weight: {{fontWeight}};\n',
-      '  src: local("{{fontName}}"),\n',
-      '       url("data:application/x-font-{{fontType}};base64,{{base64}}") format("{{fontType}}");\n',
+      '  src: url("data:application/x-font-{{fontType}};base64,{{base64}}") format("{{fontType}}");\n',
       '}'
     ].join('');
 

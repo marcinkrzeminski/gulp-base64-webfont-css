@@ -1,6 +1,7 @@
-var through2 = require('through2'),
-    gutil = require('gulp-util'),
-    template = [
+var through2 = require('through2');
+var gutil = require('gulp-util');
+var path = require('path');
+var template = [
       '@font-face {\n',
       '  font-family: "{{fontName}}";\n',
       '  font-style: {{fontStyle}};\n',
@@ -24,20 +25,22 @@ module.exports = function (list) {
   },
   flush = function (callback) {
     files.forEach(function (file, idx) {
-      var regexResult = file.path.match(/^.*\/(.+)\.(woff|woff2)$/),
-      fileName = regexResult[1],
-      fontType = regexResult[2],
-      fontName = fileName.split('_')[0].replace(/_/g, ' ').replace('-', ' '),
-      base64 = file.contents.toString('base64'),
-      fontWeight = fileName.split('_')[1],
-      fontStyle = fileName.split('_')[2],
-      tmpl = template
+      var filePath = file.path;
+      var fileName = path.basename(filePath);
+      var fileExt = path.extname(filePath);
+      var fontType = fileExt.substring(1);
+      var fontParts = filePath.split('_');
+      var fontName = fontParts[0].replace('-', ' ');
+      var fontWeight = fontParts[1];
+      var fontStyle = fontParts[2];
+      var base64 = file.contents.toString('base64');
+      var tmpl = template
              .replace(/{{fontName}}/g, fontName)
              .replace(/{{fontType}}/g, fontType)
              .replace(/{{fontStyle}}/g, fontStyle)
              .replace(/{{fontWeight}}/g, fontWeight)
-             .replace('{{base64}}', base64),
-      output = new gutil.File({
+             .replace('{{base64}}', base64);
+      var output = new gutil.File({
         cwd: file.cwd,
         base: file.base,
         path: file.base + fontType + '/' + fileName + '.css'
